@@ -381,6 +381,15 @@ if [[ -d .heroku/src ]]; then
   cp -R .heroku/src "$CACHE_DIR/.heroku/" &> /dev/null || true
 fi
 
+# Download and install ffmpeg static binaries
+cd "$BUILD_DIR"
+curl -O -s https://hero-buildpack-resources.s3.amazonaws.com/ffmpeg-release-i686-static.tar.xz
+mkdir -p vendor
+xz -dc ffmpeg-release-i686-static.tar.xz | tar -C vendor -xf -
+FFMPEG_DIR=$(ls vendor)
+ln -s "$FFMPEG_DIR" vendor/ffmpeg
+rm -f ffmpeg-release-i686-static.tar.xz
+
 # Measure the size of the Python installation.
 # shellcheck disable=SC2119
 mmeasure 'python.size' "$(measure-size)"
